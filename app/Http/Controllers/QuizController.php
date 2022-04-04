@@ -55,7 +55,7 @@ class QuizController extends Controller
      */
     public function showWithQuestions(string $slug)
     {
-        $quiz = Quiz::where('slug', $slug)->with('questions','questions.options')->first();
+        $quiz = Quiz::where('slug', $slug)->with('questions','questions.options')->firstOrFail();
         return response()->json(
             new QuizQuestionsResource($quiz)
         );
