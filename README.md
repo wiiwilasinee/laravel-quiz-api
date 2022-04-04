@@ -123,12 +123,12 @@ _If successful, this method returns a response body with the following structure
     "name": string,
     "questions": [
         {
-            "question_id": unsigned integer,
+            "id": unsigned integer,
             "content": text,
             "message": string,
             "options": [
                 {
-                    "option_id": unsigned integer,
+                    "id": unsigned integer,
                     "content": text
                 },
                 ...
