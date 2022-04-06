@@ -82,6 +82,11 @@ HTTP request
 ```sh
 GET /quizzes
 ```
+
+Request url parameter (Optional)
+
+- search  (***_string_**) - _Search Quiz name_
+
 Response
 _If successful, this method returns a response body with the following structure:_
 ```sh

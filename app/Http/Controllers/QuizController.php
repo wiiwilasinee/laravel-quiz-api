@@ -6,7 +6,9 @@ use App\Http\Requests\QuizRequest;
 use App\Http\Resources\QuizResource;
 use App\Http\Resources\QuizQuestionsResource;
 use App\Models\Quiz;
+use App\Events\QuizUpdatedEvent;
 use Illuminate\Http\Request;
+use App\Services\QuizService;
 
 class QuizController extends Controller
 {
@@ -15,10 +17,18 @@ class QuizController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, QuizService $service)
     {
-        $quizzes = QuizResource::collection(Quiz::all());
-        return response($quizzes);
+        $quizzes = \Cache::remember('quizzes', 60*30, function() {
+            return Quiz::all();
+        });
+
+        if($search = $request->search)
+        {
+            $quizzes = $service->searchCollection($quizzes, $search);
+        }
+
+        return response(QuizResource::collection($quizzes));
     }
 
     /**
@@ -30,6 +40,7 @@ class QuizController extends Controller
     public function store(QuizRequest $request)
     {
         $quiz = Quiz::create($request->all());
+        event(new QuizUpdatedEvent());
         return response([
             'message' => "Quiz Created",
             'data' => new QuizResource($quiz),
@@ -71,7 +82,7 @@ class QuizController extends Controller
     public function update(QuizRequest $request, Quiz $quiz)
     {
         $quiz->update($request->all());
-
+        event(new QuizUpdatedEvent());
         return response([
             'message' => "Quiz Updated",
             'data' => new QuizResource($quiz),
